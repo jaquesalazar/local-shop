@@ -53,7 +53,7 @@ Cuando el navegador solicita la página principal, el controlador consulta los p
 - **Estado vacío:** muestra un mensaje cuando no hay productos registrados.
 - **Diseño adaptable:** organiza el catálogo para pantallas de computadoras y dispositivos móviles.
 - **Geolocalización:** solicita al navegador las coordenadas del dispositivo con autorización del usuario.
-- **Indicador de conexión:** informa si el navegador detecta conexión de red, cuando está disponible en la interfaz.
+- **Indicador de conexión:** informa si el navegador detecta conexión de red.
 - **Instalación como PWA:** utiliza el manifiesto y los iconos para configurar la instalación.
 - **Funcionamiento offline:** permite recuperar la última página almacenada y los recursos disponibles en caché.
 
@@ -71,18 +71,18 @@ Se creó el proyecto Java con Spring Boot y se incorporaron las dependencias nec
 
 Se creó la entidad `Producto`, el repositorio para acceder a sus registros y el controlador encargado de consultar los productos y enviarlos a la vista principal.
 
-**Evidencias:**
+**Evidencias del comportamiento del catálogo:**
 - `docs/evidencias/01-catalogo-vacio.png`
-- `docs/evidencias/02-catalogo-03-productos.png`
+- `docs/evidencias/02-catalogo-03productos.png`
 - `docs/evidencias/03-catalogo-vacio-pag.png`
-- `docs/evidencias/04-catalogo-03-productos-pag.png`
+- `docs/evidencias/04-catalogo-03productos-pag.png`
 
 ### Fase 3. Integración de la base de datos
 
-Se configuró H2 mediante `application.properties` y se registraron productos con sus descripciones, precios y rutas de imágenes.
+Se configuró H2 mediante `application.properties` y se registraron productos con sus descripciones, precios y rutas de imágenes. Se verificó que los registros se reflejaran en el catálogo.
 
-**Evidencias relacionadas con el catálogo y los registros:**
-- `docs/evidencias/02-catalogo-03-productos.png`
+**Evidencias:**
+- `docs/evidencias/02-catalogo-03productos.png`
 - `docs/evidencias/05-catalogo-seis-productos.png`
 - `docs/evidencias/06-catalogo-seis-productos-pag.png`
 
@@ -93,7 +93,7 @@ Se creó la plantilla `index.html` con Thymeleaf para presentar dinámicamente l
 **Evidencias:**
 - `docs/evidencias/01-catalogo-vacio.png`
 - `docs/evidencias/03-catalogo-vacio-pag.png`
-- `docs/evidencias/04-catalogo-03-productos-pag.png`
+- `docs/evidencias/04-catalogo-03productos-pag.png`
 - `docs/evidencias/06-catalogo-seis-productos-pag.png`
 
 ### Fase 5. Configuración de la PWA
@@ -102,4 +102,94 @@ Se incorporó `manifest.json` con los datos de instalación y los iconos. Tambi�
 
 **Evidencias:**
 - `docs/evidencias/11-manifes.png`
-- `docs/evidencias
+- `docs/evidencias/12-service-worker.png`
+- `docs/evidencias/13-cache.png`
+
+### Fase 6. Pruebas de funcionamiento
+
+Se realizaron pruebas para comprobar el comportamiento de la aplicación con conexión y sin conexión, su adaptación a dispositivos móviles y el acceso a la geolocalización mediante los permisos del navegador.
+
+También se verificó que el Service Worker pudiera recuperar contenido previamente almacenado en caché cuando la aplicación no tenía acceso a la red.
+
+**Evidencias:**
+- `docs/evidencias/07-estado-en-linea.png`
+- `docs/evidencias/08-estado-offline.png`
+- `docs/evidencias/09-vista-movil.png`
+- `docs/evidencias/10-geolocalizacion.png`
+
+## 7. Requisitos
+
+Para ejecutar el proyecto se necesita:
+
+- Java JDK 21 o una versión compatible.
+- Maven, o utilizar el Maven Wrapper incluido en el proyecto.
+- Un navegador web actualizado.
+
+## 8. Instalación y ejecución
+
+1. Clonar el repositorio:
+
+   ```bash
+   git clone https://github.com/jaquesalazar/local-shop.git
+   ```
+
+2. Entrar en la carpeta del proyecto:
+
+   ```bash
+   cd local-shop
+   ```
+
+3. Ejecutar la aplicación con Maven Wrapper:
+
+   En Windows:
+
+   ```bash
+   mvnw.cmd spring-boot:run
+   ```
+
+   En Linux o macOS:
+
+   ```bash
+   ./mvnw spring-boot:run
+   ```
+
+4. Abrir la aplicación en el navegador:
+
+   ```text
+   http://localhost:8080
+   ```
+
+## 9. Base de datos
+
+La aplicación utiliza H2 Database para almacenar los productos del catálogo. La configuración de conexión se encuentra en `application.properties`.
+
+La base de datos utiliza almacenamiento en archivo, por lo que los registros pueden conservarse entre ejecuciones de la aplicación. La carpeta `data/` contiene los archivos locales de la base de datos y está excluida del repositorio mediante `.gitignore`.
+
+Para consultar la consola de H2, iniciar la aplicación y acceder a:
+
+```text
+http://localhost:8080/h2-console
+```
+
+## 10. Manifiesto, Service Worker y funcionamiento offline
+
+El archivo `manifest.json` define los datos necesarios para identificar e instalar LocalShop como una PWA, incluyendo el nombre, los colores, el modo de visualización y los iconos.
+
+El archivo `sw.js` administra el almacenamiento en caché de la página principal y de los recursos solicitados. Cuando existe conexión, permite actualizar el contenido almacenado; cuando no hay conexión, intenta recuperar la última versión disponible en caché.
+
+Esta funcionalidad ofrece disponibilidad limitada sin conexión. No sustituye la conexión con la base de datos ni permite realizar nuevas operaciones sobre ella mientras el servidor no esté disponible.
+
+## 11. Repositorio
+
+El código fuente y los archivos del proyecto se encuentran disponibles en GitHub:
+
+[https://github.com/jaquesalazar/local-shop](https://github.com/jaquesalazar/local-shop)
+
+## 12. Autores
+
+- Jaqueline Salazar 
+- Alexandro De la Vega Rodriguez
+- Ana Sofia Peréz Ortega
+- Erick Noel Aguilar Chavarría
+- Moira Villalobos Hinojos
+- Valeria Castillo López
