@@ -1,0 +1,419 @@
+
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f8f7f3">
+    <title>LocalShop | Productos locales</title>
+    <link rel="manifest" href="/manifest.json">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        :root {
+            --cream: #f8f7f3;
+            --white: #ffffff;
+            --green: #687b60;
+            --green-dark: #4c6047;
+            --text: #292d27;
+            --muted: #85877f;
+            --border: #eae8e0;
+            --beige: #eeece3;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--cream);
+            color: var(--text);
+            font-family: "Segoe UI", Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .navbar {
+            padding: 20px 0;
+            background: var(--cream);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .brand {
+            color: var(--text);
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -1px;
+            text-decoration: none;
+        }
+
+        .brand span {
+            color: var(--green);
+        }
+
+        .location-button {
+            padding: 10px 16px;
+            border: 1px solid #d8d8cc;
+            border-radius: 8px;
+            background: transparent;
+            color: var(--text);
+            font-size: 13px;
+            font-weight: 600;
+            transition: background 0.2s ease;
+        }
+
+        .location-button:hover {
+            background: var(--beige);
+        }
+
+        .intro {
+            padding: 65px 0 48px;
+            max-width: 720px;
+        }
+
+        .eyebrow {
+            margin-bottom: 16px;
+            color: var(--green);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .intro h1 {
+            margin-bottom: 18px;
+            font-size: clamp(34px, 5vw, 52px);
+            font-weight: 600;
+            letter-spacing: -2px;
+            line-height: 1.13;
+        }
+
+        .intro p {
+            max-width: 520px;
+            color: var(--muted);
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        .catalog-header {
+            padding-top: 30px;
+            margin-bottom: 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        .catalog-header h2 {
+            margin-bottom: 7px;
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: -0.7px;
+        }
+
+        .catalog-header p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .product-card {
+            height: 100%;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: var(--white);
+            transition: border-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-3px);
+            border-color: #c9d0c1;
+        }
+
+        .product-art {
+            display: grid;
+            min-height: 175px;
+            place-items: center;
+            background: #eeece3;
+            color: var(--green);
+            font-size: 34px;
+        }
+
+        .product-content {
+            padding: 21px;
+        }
+
+        .product-label {
+            color: var(--green);
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+        }
+
+        .product-name {
+            margin: 10px 0;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .product-description {
+            min-height: 44px;
+            margin-bottom: 20px;
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .product-price {
+            color: var(--text);
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .empty-state {
+            padding: 50px 20px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: var(--white);
+            text-align: center;
+        }
+
+        .empty-state h3 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .empty-state p {
+            margin: 8px 0 0;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        #status-location {
+            display: none;
+            margin-top: 24px;
+            padding: 14px 16px;
+            border: 1px solid #d8dfd2;
+            border-radius: 8px;
+            background: #f0f2eb;
+            color: var(--green-dark);
+            font-size: 14px;
+            overflow-wrap: anywhere;
+        }
+
+        footer {
+            margin-top: 75px;
+            padding: 25px 0;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .connection-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 8px 11px;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            background: var(--white);
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .connection-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #5c8a50;
+        }
+
+        .connection-status.offline {
+            border-color: #ead9c4;
+            background: #fbf5ed;
+            color: #95652e;
+        }
+
+        .connection-status.offline .connection-dot {
+            background: #bd853e;
+        }
+
+        .product-art img {
+            display: block;
+            width: 100%;
+            height: 175px;
+            object-fit: cover;
+        }
+
+        @media (max-width: 400px) {
+            .connection-status {
+                padding: 7px 8px;
+                font-size: 11px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .navbar {
+                padding: 16px 0;
+            }
+
+            .brand {
+                font-size: 22px;
+            }
+
+            .location-button {
+                padding: 9px 11px;
+                font-size: 12px;
+            }
+
+            .intro {
+                padding: 48px 0 35px;
+            }
+
+            .intro h1 {
+                font-size: 36px;
+                letter-spacing: -1.3px;
+            }
+
+            .product-art {
+                min-height: 135px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                scroll-behavior: auto !important;
+                transition: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a class="brand" href="/">Local<span>Shop.</span></a>
+            <button id="btnGeo" class="location-button">Mi ubicación</button>
+        </div>
+
+        <span id="connection-status" class="connection-status online"
+            role="status" aria-live="polite">
+            <span class="connection-dot"></span>
+            <span id="connection-text">En línea</span>
+        </span>
+    </nav>
+
+    <main class="container">
+        <section class="intro">
+            <div class="eyebrow">Compra local, vive mejor</div>
+            <h1>Pequeños negocios.<br>Grandes descubrimientos.</h1>
+            <p>Explora productos hechos con dedicación por negocios locales y encuentra algo especial para ti.</p>
+        </section>
+
+        <section>
+            <div class="catalog-header">
+                <h2>Productos destacados</h2>
+                <p>Descubre lo que nuestra comunidad tiene para ofrecer.</p>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-12 col-sm-6 col-lg-4"
+                     th:each="producto : ${productos}">
+                    <article class="product-card">
+                        <div class="product-art">
+                            <img th:if="${producto.imagenUrl != null and !#strings.isEmpty(producto.imagenUrl)}"
+                                th:src="${producto.imagenUrl}"
+                                th:alt="${producto.nombre}"
+                                loading="lazy">
+
+                            <span th:unless="${producto.imagenUrl != null and !#strings.isEmpty(producto.imagenUrl)}"
+                                aria-hidden="true">LocalShop.</span>
+                        </div>
+                        <div class="product-content">
+                            <div class="product-label">Selección local</div>
+                            <h3 class="product-name" th:text="${producto.nombre}">Nombre del producto</h3>
+                            <p class="product-description"
+                               th:text="${producto.descripcion}">Descripción del producto</p>
+                            <div class="product-price"
+                                 th:text="${'$' + #numbers.formatDecimal(producto.precio, 1, 2)}">$0.00</div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+
+            <div th:if="${#lists.isEmpty(productos)}" class="empty-state mt-3">
+                <h3>Aún no hay productos</h3>
+                <p>Estamos preparando nuevas opciones para ti. Vuelve pronto.</p>
+            </div>
+        </section>
+
+        <div id="status-location" role="status" aria-live="polite"></div>
+    </main>
+
+    <footer>
+        <div class="container d-flex flex-column flex-sm-row justify-content-between gap-2">
+            <span>LocalShop · IDGS102N</span>
+            <span>Equipo: Arcoiris</span>
+        </div>
+    </footer>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+                .then(reg => console.log('Service Worker registrado:', reg.scope))
+                .catch(err => console.error('Error al registrar Service Worker:', err));
+        }
+
+        const btnGeo = document.getElementById('btnGeo');
+        const statusLocation = document.getElementById('status-location');
+
+        btnGeo.addEventListener('click', () => {
+            statusLocation.style.display = 'block';
+
+            if (!navigator.geolocation) {
+                statusLocation.textContent = 'Tu navegador no admite geolocalización.';
+                return;
+            }
+
+            statusLocation.textContent = 'Obteniendo ubicación...';
+
+            navigator.geolocation.getCurrentPosition(
+                pos => {
+                    statusLocation.textContent =
+                        `Ubicación actual: Lat ${pos.coords.latitude.toFixed(4)}, Lon ${pos.coords.longitude.toFixed(4)}`;
+                },
+                error => {
+                    if (error.code === error.PERMISSION_DENIED) {
+                        statusLocation.textContent = 'No se concedió permiso para acceder a la ubicación.';
+                    } else if (error.code === error.TIMEOUT) {
+                        statusLocation.textContent = 'La solicitud tardó demasiado. Intenta de nuevo.';
+                    } else {
+                        statusLocation.textContent = 'No se pudo obtener la ubicación. Revisa los permisos del navegador.';
+                    }
+                },
+                {
+                    enableHighAccuracy: false,
+                    timeout: 10000,
+                    maximumAge: 60000
+                }
+            );
+        });
+
+        const connectionStatus = document.getElementById('connection-status');
+        const connectionText = document.getElementById('connection-text');
+
+        function updateConnectionStatus() {
+            const online = navigator.onLine;
+
+            connectionStatus.classList.toggle('online', online);
+            connectionStatus.classList.toggle('offline', !online);
+
+            connectionText.textContent = online ? 'En línea' : 'Sin conexión';
+        }
+
+        window.addEventListener('online', updateConnectionStatus);
+        window.addEventListener('offline', updateConnectionStatus);
+
+        updateConnectionStatus();
+    </script>
+</body>
+</html>
